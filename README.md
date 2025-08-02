@@ -1,2 +1,1 @@
-# dampc
-The Compiler of Damp Programming Language
+This repository is empty for now.
