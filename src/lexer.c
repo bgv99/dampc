@@ -94,8 +94,7 @@ Vec *tokenise(char source_code[]) {
             case '+': token.type = T_PLUS; Vec_push(tokens, &token); break;
             case '-': token.type = T_MINUS; Vec_push(tokens, &token); break;
             case '*': token.type = T_STAR; Vec_push(tokens, &token); break;
-            case '/': token.type = T_SLASH; Vec_push(tokens, &token); break;
-            default: token.type = T_NONE; Vec_push(tokens, &token); continue;
+            case '/': token.type = T_SLASH; Vec_push(tokens, &token);
         }
     }
 

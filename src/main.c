@@ -58,11 +58,9 @@ int main(int argc, char *argv[]) {
     tokens = tokenise(source_code);
 
     if(Vec_length(tokens) > 0) {
-        parse();
-
         output_file = fopen("out.asm", "w");
 
-        generateAsm(ast);
+        generateAsm(parse());
         fclose(output_file);
         system("nasm -f elf64 out.asm && ld -o out out.o");
     } else {

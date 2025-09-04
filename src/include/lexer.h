@@ -13,8 +13,7 @@ typedef enum {
     T_PLUS = 7,
     T_MINUS = 8,
     T_STAR = 9,
-    T_SLASH = 10,
-    T_NONE = 11
+    T_SLASH = 10
 } TokenType;
 
 typedef struct {

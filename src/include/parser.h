@@ -5,4 +5,4 @@
 AST *expression();
 AST *statement();
 void consume();
-void parse();
+AST *parse();

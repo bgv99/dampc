@@ -19,34 +19,27 @@ AST *expression() {
         left = newLiteralNode(atoi(t->text));
 
         consume();
-
-        if(t->type == T_SEMICOLON) {
-            return left;
-        }
     } else {
         _log(ERR, "Expected a literal value.");
         exit(EXIT_FAILURE);
     }
 
-    if(t->type == T_PLUS) {
+    while(t->type == T_PLUS) {
         consume();
 
         if(t->type == T_LITERAL) {
             right = newLiteralNode(atoi(t->text));
             left = newPlusNode(left, right);
-
-            consume();
-
-            if(t->type != T_SEMICOLON) {
-                _log(ERR, "Expected a semicolon.");
-                exit(EXIT_FAILURE);
-            }
         } else {
             _log(ERR, "Expected a literal value.");
             exit(EXIT_FAILURE);
         }
-    } else {
-        _log(ERR, "Expected an operator.");
+
+        consume();
+    }
+
+    if(t->type != T_SEMICOLON) {
+        _log(ERR, "Expected a semicolon.");
         exit(EXIT_FAILURE);
     }
 
@@ -76,9 +69,11 @@ void consume() {
     }
 }
 
-void parse() {
+AST *parse() {
     t = Vec_get(tokens, t_index);
     ast = malloc(sizeof(AST));
     ast->NodeType = NODE_MAIN;
     ast->Nodes.MainNode.body = statement();
+
+    return ast;
 }
