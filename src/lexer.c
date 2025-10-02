@@ -1,5 +1,8 @@
 #include "include/vec.h"
 #include "include/lexer.h"
+#include "include/cstr.h"
+
+#include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -39,7 +42,7 @@ Vec *tokenise(char source_code[]) {
                 token.column++;
             }
 
-            token.text = strdup(buffer);
+            token.text = cstr_clone_malloc(buffer);
 
             if(strcmp(buffer, "return") == 0) {
                 token.type = T_KW_RETURN;
@@ -72,7 +75,7 @@ Vec *tokenise(char source_code[]) {
             }
 
             token.type = T_LITERAL;
-            token.text = strdup(buffer);
+            token.text = cstr_clone_malloc(buffer);
 
             Vec_push(tokens, &token);
             memset(buffer, 0, sizeof(char) * (buffer_index + 1));
@@ -83,7 +86,7 @@ Vec *tokenise(char source_code[]) {
             continue;
         }
 
-        token.text = strdup(&source_code[i]);
+        token.text = cstr_clone_malloc(&source_code[i]);
         token.column++;
 
         switch(source_code[i]) {

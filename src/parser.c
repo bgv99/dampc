@@ -62,7 +62,8 @@ AST *statement() {
 }
 
 void consume() {
-    if(Vec_length(tokens) > t_index && (Vec_get(tokens, t_index + 1))) {
+    // For whatever reason... I feel like this needs work... - OgloTheNerd (Oglo12)
+    if(Vec_length(tokens) > (unsigned int)t_index && (Vec_get(tokens, t_index + 1))) {
         t_index++;
 
         t = Vec_get(tokens, t_index);
