@@ -1,8 +1,15 @@
 #pragma once
 
-#include <stdlib.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
-typedef struct Vec Vec;
+typedef struct {
+    unsigned int length;
+    unsigned int capacity;
+    void *elements;
+    size_t element_size;
+} Vec;
 
 Vec *Vec_init(size_t byte_size, unsigned int element_count);
 void Vec_push(Vec *vec, void *value);

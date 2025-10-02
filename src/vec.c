@@ -1,13 +1,8 @@
 #include "include/vec.h"
-#include <stdio.h>
-#include <memory.h>
 
-typedef struct Vec {
-    unsigned int length;
-    unsigned int capacity;
-    void *elements;
-    size_t element_size;
-} Vec;
+#include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
 
 Vec *Vec_init(size_t byte_size, unsigned int element_count) {
     Vec *initial_alloc = malloc(sizeof(Vec));
