@@ -1,20 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "include/lexer.h"
 #include "include/parser.h"
 #include "include/vec.h"
 #include "include/log.h"
 #include "include/gen.h"
-#include "include/ast.h"
 
-extern AST *ast;
+Vec *logs;
 
-char *filename;
-Vec *tokens;
-FILE *output_file;
-
-int extensionCheck(char *filename) {
+int32_t main_validateSource(char *filename) {
     char *ext = strrchr(filename, '.');
 
     if(!ext) {
@@ -27,50 +23,61 @@ int extensionCheck(char *filename) {
 }
 
 int main(int argc, char *argv[]) {
+    logs = vec_init(sizeof(Log), 0);
+
     if(argc != 2) {
-        _log(INFO, "Usage: dampc <file.damp>");
+        log_new(logs, (Log) {
+            .level = INFO,
+            .type = USAGE_ERROR
+        });
+
+        log_flush(logs);
 
         return EXIT_FAILURE;
     }
 
-    if(extensionCheck(argv[1]) != 0) {
-        _log(ERR, "Invalid Damp file!");
+    if(main_validateSource(argv[1]) != 0) {
+        log_new(logs, (Log) {
+            .level = INFO,
+            .type = INVALID_SOURCE
+        });
+
+        log_flush(logs);
 
         return EXIT_FAILURE;
     }
 
-    #if !defined (__linux__) && !defined (__x86_64__)
-        _log(INFO, "Unsupported platform.");
-
-        return EXIT_FAILURE;
-    #endif
-
-    FILE *source_file = fopen(argv[1], "r");
+    char *source_filename = argv[1];
+    FILE *source_file = fopen(source_filename, "r");
     char *source_code = malloc(sizeof(char));
+    FILE *output_file;
+    Parser p;
+    char c;
 
-    filename = argv[1];
-
-    for(int i = 0, c; (c = fgetc(source_file)) != EOF; i++) {
+    for(size_t i = 0; (c = fgetc(source_file)) != EOF; i++) {
         source_code = realloc(source_code, sizeof(char) * (i + 1));
         source_code[i] = c;
     }
 
-    tokens = tokenise(source_code);
+    p.tokens = lexer_tokenise(source_code);
 
-    if(Vec_length(tokens) > 0) {
+    if(vec_length(p.tokens) > 0) {
         output_file = fopen("out.asm", "w");
 
-        generateAsm(parse());
+        gen_asm(parser_parse(&p), output_file);
         fclose(output_file);
         system("nasm -f elf64 out.asm && ld -o out out.o");
     } else {
-        _log(INFO, "There is nothing to do.");
+        log_new(logs, (Log) {
+            .level = INFO,
+            .type = BLANK_SOURCE
+        });
     }
 
     free(source_code);
-    Vec_destroy(tokens);
+    vec_destroy(p.tokens);
     fclose(source_file);
-    AST_destroy(ast);
+    log_flush(logs);
 
     return EXIT_SUCCESS;
 }

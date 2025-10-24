@@ -1,79 +1,80 @@
 #include "include/parser.h"
-#include "include/vec.h"
-#include "include/lexer.h"
-#include "include/ast.h"
-#include "include/log.h"
-#include <stdlib.h>
 
-extern Vec *tokens;
-extern AST *ast;
-
-int t_index = 0;
-Token *t;
-
-AST *expression() {
+AST *parser_expression(Parser *p) {
     AST *left = NULL;
     AST *right = NULL;
 
-    if(t->type == T_LITERAL) {
-        left = newLiteralNode(atoi(t->text));
+    if(p->current_token->type == T_LITERAL) {
+        left = ast_newLiteralNode(strtol(p->current_token->text, NULL, 10));
 
-        consume();
+        parser_consume(p);
     } else {
-        _log(ERR, "Expected a literal value.");
-        exit(EXIT_FAILURE);
+        log_new(logs, (Log) {
+            .level = ERR,
+            .type = EXPECTED_LITERAL
+        });
     }
 
-    while(t->type == T_PLUS) {
-        consume();
+    while(p->current_token->type == T_PLUS) {
+        parser_consume(p);
 
-        if(t->type == T_LITERAL) {
-            right = newLiteralNode(atoi(t->text));
-            left = newPlusNode(left, right);
+        if(p->current_token->type == T_LITERAL) {
+            right = ast_newLiteralNode(strtol(p->current_token->text, NULL, 10));
+            left = ast_newPlusNode(left, right);
         } else {
-            _log(ERR, "Expected a literal value.");
-            exit(EXIT_FAILURE);
+            log_new(logs, (Log) {
+                .level = ERR,
+                .type = EXPECTED_LITERAL
+            });
+
+            break;
         }
 
-        consume();
+        parser_consume(p);
     }
 
-    if(t->type != T_SEMICOLON) {
-        _log(ERR, "Expected a semicolon.");
-        exit(EXIT_FAILURE);
+    if(p->current_token->type != T_SEMICOLON) {
+        log_new(logs, (Log) {
+            .level = ERR,
+            .type = EXPECTED_SEMICOLON
+        });
     }
 
     return left;
 }
 
-AST *statement() {
+AST *parser_statement(Parser *p) {
     AST *node = NULL;
 
-    if(t->type == T_KW_RETURN) {
-        consume();
+    if(p->current_token->type == T_KW_RETURN) {
+        parser_consume(p);
 
-        node = newReturnNode(expression());
+        node = ast_newReturnNode(parser_expression(p));
     } else {
-        _log(ERR, "Expected return, found '%s'.", t->text);
-        exit(EXIT_FAILURE);
+        log_new(logs, (Log) {
+            .level = ERR,
+            EXPECTED_RETURN
+        });
+
+        parser_expression(p);
     }
 
     return node;
 }
 
-void consume() {
-    if(Vec_length(tokens) > t_index && (Vec_get(tokens, t_index + 1))) {
-        t_index++;
-
-        t = Vec_get(tokens, t_index);
+void parser_consume(Parser *p) {
+    if(vec_length(p->tokens) > p->token_index && (vec_get(p->tokens, p->token_index + 1))) {
+        p->token_index++;
+        p->current_token = vec_get(p->tokens, p->token_index);
     }
 }
 
-AST *parse() {
-    t = Vec_get(tokens, t_index);
-    ast = malloc(sizeof(AST));
-    ast->NodeType = NODE_MAIN;
-    ast->Nodes.MainNode.body = statement();
+AST *parser_parse(Parser *p) {
+    p->token_index = 0;
+    p->current_token = vec_get(p->tokens, p->token_index);
+    p->ast = malloc(sizeof(AST));
+    p->ast->NodeType = NODE_MAIN;
+    p->ast->Nodes.MainNode.body = parser_statement(p);
 
-    return ast;
+    return p->ast;
 }

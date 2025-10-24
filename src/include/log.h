@@ -1,9 +1,36 @@
-#pragma once
+#ifndef LOG_H
+#define LOG_H
+
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include "vec.h"
+
+extern Vec *logs;
 
 typedef enum {
-    ERR = 0,
-    WARN = 1,
-    INFO = 2
+    ERR,
+    WARN,
+    INFO
 } LogLevel;
 
-void _log(LogLevel, char *, ...);
+typedef enum {
+    EXPECTED_SEMICOLON,
+    BLANK_SOURCE,
+    USAGE_ERROR,
+    INVALID_SOURCE,
+    EXPECTED_LITERAL,
+    EXPECTED_RETURN
+} LogType;
+
+typedef struct {
+    LogLevel level;
+    LogType type;
+} Log;
+
+char *log_typeToStr(LogType type);
+void log_new(Vec *logs, Log log);
+void log_flush(Vec *logs);
+
+#endif

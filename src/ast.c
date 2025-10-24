@@ -1,63 +1,62 @@
 #include "include/ast.h"
-#include <stdlib.h>
 
-AST *ast;
-
-void AST_destroy(AST *ast) {
-    if(ast) {
-        switch(ast->NodeType) {
-            case NODE_LITERAL:
-                break;
-            case NODE_PLUS:
-                AST_destroy(ast->Nodes.PlusNode.left);
-                AST_destroy(ast->Nodes.PlusNode.right);
-
-                break;
-            case NODE_RETURN:
-                AST_destroy(ast->Nodes.ReturnNode.expr);
-
-                break;
-            case NODE_MAIN:
-                AST_destroy(ast->Nodes.MainNode.body);
-        }
-
-        free(ast);
+void ast_destroy(AST *ast) {
+    if(!ast) {
+        return;
     }
+
+    switch(ast->NodeType) {
+        case NODE_LITERAL:
+            break;
+        case NODE_PLUS:
+            ast_destroy(ast->Nodes.PlusNode.left);
+            ast_destroy(ast->Nodes.PlusNode.right);
+
+            break;
+        case NODE_RETURN:
+            ast_destroy(ast->Nodes.ReturnNode.expr);
+
+            break;
+        case NODE_MAIN:
+            ast_destroy(ast->Nodes.MainNode.body);
+    }
+
+    free(ast);
 }
 
-AST *newLiteralNode(int _value) {
+AST *ast_newLiteralNode(int32_t value) {
     AST *node = malloc(sizeof(AST));
 
     node->NodeType = NODE_LITERAL;
-    node->Nodes.LiteralNode.value = _value;
+    node->Nodes.LiteralNode.value = value;
 
     return node;
 }
 
-AST *newMainNode(AST *_body) {
+AST *ast_newMainNode(AST *body) {
     AST *node = malloc(sizeof(AST));
 
     node->NodeType = NODE_MAIN;
-    node->Nodes.MainNode.body = _body;
+    node->Nodes.MainNode.body = body;
 
     return node;
 }
 
-AST *newReturnNode(AST *_expr) {
+AST *ast_newReturnNode(AST *expr) {
     AST *node = malloc(sizeof(AST));
 
     node->NodeType = NODE_RETURN;
-    node->Nodes.ReturnNode.expr = _expr;
+    node->Nodes.ReturnNode.expr = expr;
 
     return node;
 }
 
-AST *newPlusNode(AST *_left, AST *_right) {
+AST *ast_newPlusNode(AST *left, AST *right) {
     AST *node = malloc(sizeof(AST));
 
     node->NodeType = NODE_PLUS;
-    node->Nodes.PlusNode.left = _left;
-    node->Nodes.PlusNode.right = _right;
+    node->Nodes.PlusNode.left = left;
+    node->Nodes.PlusNode.right = right;
 
     return node;
 }
