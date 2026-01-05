@@ -1,5 +1,5 @@
 ### Library
-Libraries can be included using the `include` keyword.
+Libraries can be included using the `import` keyword.
 
 | Library | Description                         |
 |---------|-------------------------------------|
