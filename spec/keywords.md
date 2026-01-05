@@ -8,7 +8,7 @@ Since these keywords are reserved for the language, you can not use them as a na
 - `for`
 - `function`
 - `if`
-- `include`
+- `import`
 - `macro`
 - `next`
 - `return`
