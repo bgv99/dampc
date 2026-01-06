@@ -1,5 +1,5 @@
-### Compiler arguments
-| Argument (full) | Argument (short) | Required | Value type | Default value            | Description                |
+### Compiler flags
+| Flag (full)     | Flag (short)     | Required | Value type | Default value            | Description                |
 |-----------------|------------------|----------|------------|--------------------------|----------------------------|
 | `--help`        | `-h`             | No       |            |                          | Display help.              |
 | `--version`     | `-v`             | No       |            |                          | Show the version.          |
