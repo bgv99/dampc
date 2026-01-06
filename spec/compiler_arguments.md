@@ -10,4 +10,4 @@
 
 Notes:
 - `--input` can be used with multiple files.
-- `--edition` will use the latest available Damp edition if not specificed.
+- `--edition` will use the latest available Damp edition if not specified.
