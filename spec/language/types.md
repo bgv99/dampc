@@ -1,5 +1,5 @@
 ### Types
-| Type      | Min. size | Example value | Description                           |
+| Type      | Size      | Example value | Description                           |
 |-----------|-----------|---------------|---------------------------------------|
 | `int`     | 4 bytes   | `123`         | Signed integer type.                  |
 | `char`    | 1 byte    | `'a'`         | Unsigned ASCII character type.        |
