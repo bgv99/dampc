@@ -1,11 +1,9 @@
 Specification for the Damp programming language.
 
-***
-
 ### Directories
 
-##### /compiler
+#### /compiler
 Specification related to the compiler.
 
-##### /language
+#### /language
 Specification related to the language.
